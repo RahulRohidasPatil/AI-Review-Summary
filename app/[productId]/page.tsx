@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AIReviewSummary } from "@/components/ai-review-summary";
 import { Reviews } from "@/components/reviews";
+import { StreamingSummary } from "@/components/streaming-summary";
 import { getProduct, getProducts } from "@/lib/sample-data";
 import type { Product } from "@/lib/types";
 
@@ -29,7 +29,8 @@ export default async function ProductPage({
           </p>
         </div>
 
-        <AIReviewSummary product={product} />
+        {/* <AIReviewSummary product={product} /> */}
+        <StreamingSummary product={product} />
 
         <Reviews product={product} />
       </div>
