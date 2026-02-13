@@ -12,6 +12,20 @@ export async function summarizeReviews(product: Product): Promise<string> {
   cacheLife("hours");
   cacheTag(`product-summary-${product.slug}`);
 
+  const startTime = Date.now();
+  const requestId = crypto.randomUUID();
+
+  console.log(
+    JSON.stringify({
+      event: "ai_request_start",
+      requestId,
+      function: "summarizeReviews",
+      productSlug: product.slug,
+      reviewCount: product.reviews.length,
+      timestamp: new Date().toISOString(),
+    }),
+  );
+
   const averageRating =
     product.reviews.reduce((acc, review) => acc + review.stars, 0) /
     product.reviews.length;
@@ -47,19 +61,41 @@ ${product.reviews
   .join("\n\n")}`;
 
   try {
-    const { text } = await generateText({
+    const { text, usage } = await generateText({
       model: openai("gpt-5-nano"),
       prompt,
     });
 
-    // Clean up the response
-    return text
-      .trim()
-      .replace(/^"/, "")
-      .replace(/"$/, "")
-      .replace(/[[(]\d+ words[\])]/g, "");
+    const duration = Date.now() - startTime;
+
+    console.log(
+      JSON.stringify({
+        event: "ai_request_success",
+        requestId,
+        function: "summarizeReviews",
+        productSlug: product.slug,
+        duration,
+        totalTokens: usage?.totalTokens,
+        timestamp: new Date().toISOString(),
+      }),
+    );
+
+    return text.trim();
   } catch (error) {
-    console.error("Failed to generate summary:", error);
+    const duration = Date.now() - startTime;
+
+    console.error(
+      JSON.stringify({
+        event: "ai_request_error",
+        requestId,
+        function: "summarizeReviews",
+        productSlug: product.slug,
+        duration,
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      }),
+    );
+
     throw new Error("Unable to generate review summary. Please try again.");
   }
 }
