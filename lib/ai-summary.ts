@@ -1,5 +1,6 @@
 import { openai } from "@ai-sdk/openai";
 import { generateText, Output, streamText } from "ai";
+import { cacheLife, cacheTag } from "next/cache";
 import {
   type Product,
   type ReviewInsights,
@@ -7,6 +8,10 @@ import {
 } from "./types";
 
 export async function summarizeReviews(product: Product): Promise<string> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`product-summary-${product.slug}`);
+
   const averageRating =
     product.reviews.reduce((acc, review) => acc + review.stars, 0) /
     product.reviews.length;
@@ -105,6 +110,10 @@ ${product.reviews
 export async function getReviewInsights(
   product: Product,
 ): Promise<ReviewInsights> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`product-insights-${product.slug}`);
+
   const averageRating =
     product.reviews.reduce((acc, review) => acc + review.stars, 0) /
     product.reviews.length;
