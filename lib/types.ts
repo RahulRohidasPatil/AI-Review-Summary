@@ -19,3 +19,12 @@ export const ProductSchema = z.object({
 // Infer TypeScript types from schemas
 export type Review = z.infer<typeof ReviewSchema>;
 export type Product = z.infer<typeof ProductSchema>;
+
+// Review insights schema
+export const ReviewInsightsSchema = z.object({
+  pros: z.array(z.string()).describe("Positive aspects mentioned in reviews"),
+  cons: z.array(z.string()).describe("Negative aspects or concerns"),
+  themes: z.array(z.string()).describe("Key themes across all reviews"),
+});
+
+export type ReviewInsights = z.infer<typeof ReviewInsightsSchema>;

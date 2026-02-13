@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ReviewInsights } from "@/components/review-insights";
 import { Reviews } from "@/components/reviews";
 import { StreamingSummary } from "@/components/streaming-summary";
 import { getProduct, getProducts } from "@/lib/sample-data";
@@ -31,6 +32,7 @@ export default async function ProductPage({
 
         {/* <AIReviewSummary product={product} /> */}
         <StreamingSummary product={product} />
+        <ReviewInsights product={product} />
 
         <Reviews product={product} />
       </div>
