@@ -1,9 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getReviewInsights } from "@/lib/ai-summary";
-import type { Product } from "@/lib/types";
+import type {
+  Product,
+  ReviewInsights as ReviewInsightsType,
+} from "@/lib/types";
 
 export async function ReviewInsights({ product }: { product: Product }) {
-  const insights = await getReviewInsights(product);
+  let insights: ReviewInsightsType;
+  try {
+    insights = await getReviewInsights(product);
+  } catch (error) {
+    console.error("AI insights failed:", error);
+    return null; // Silently fail - summary is more important
+  }
 
   return (
     <Card className="w-full max-w-prose">
